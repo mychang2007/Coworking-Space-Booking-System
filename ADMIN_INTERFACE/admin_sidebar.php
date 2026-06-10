@@ -6,6 +6,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="admin-sidebar-logo">CO<span>WORK</span></div>
 
   <ul class="admin-nav">
+    <li class="<?= $currentPage==='admin_dashboard.php'   ? 'active' : '' ?>">
+      <a href="admin_dashboard.php">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+    </li>
     <li class="<?= $currentPage==='manage_workspace.php'  ? 'active' : '' ?>">
       <a href="manage_workspace.php">
         <span class="nav-icon">🏢</span> Manage Workspace
