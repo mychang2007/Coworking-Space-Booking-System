@@ -305,7 +305,7 @@ li a:hover::before{width:100%; }
     background: rgba(20,15,10,0.7); backdrop-filter: blur(4px);
     padding: 20px 24px; color: #fff;
 }
-.gallery-caption h4 { font-size: 1rem; margin-bottom: 4px; }
+.gallery-caption h4 { font-size: 1rem; margin-bottom: 4px;color: rgba(255, 187, 119, 0.8); }
 .gallery-caption p  { font-size: 0.82rem; color: rgba(255,255,255,0.8); margin: 0; }
 .gallery-btn {
     position: absolute; top: 50%; transform: translateY(-50%);
