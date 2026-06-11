@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2026 at 10:38 AM
+-- Generation Time: Jun 11, 2026 at 11:49 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -54,7 +54,8 @@ INSERT INTO `booking` (`booking_id`, `customer_id`, `workspace_id`, `staff_id`, 
 (58, 4, 33, NULL, '2026-06-10', 'BK-20260610-03D5D', 'pending checkin', '2026-06-10 10:00:00', '2026-06-17 10:00:00', NULL, NULL, 'week', 400.00, '', '2026-06-11 03:28:18', '2026-06-11 03:28:18'),
 (59, 4, 32, NULL, '2026-06-11', 'BK-20260610-7D782', 'pending checkin', '2026-06-11 10:00:00', '2026-07-11 10:00:00', NULL, NULL, 'month', 1000.00, '', '2026-06-11 03:28:47', '2026-06-11 03:28:47'),
 (60, 4, 31, NULL, '2026-06-10', 'BK-20260610-6DA5B', 'active', '2026-06-10 10:00:00', '2026-07-10 10:00:00', NULL, NULL, 'month', 1000.00, '', '2026-06-11 03:29:11', '2026-06-11 03:45:37'),
-(61, 4, 34, NULL, '2026-06-10', 'BK-20260610-F3EEE', 'completed', '2026-06-10 10:00:00', '2026-07-10 10:00:00', NULL, NULL, 'month', 1000.00, '', '2026-06-11 03:29:52', '2026-06-11 03:33:46');
+(61, 4, 34, NULL, '2026-06-10', 'BK-20260610-F3EEE', 'completed', '2026-06-10 10:00:00', '2026-07-10 10:00:00', NULL, NULL, 'month', 1000.00, '', '2026-06-11 03:29:52', '2026-06-11 03:33:46'),
+(62, 4, 35, NULL, '2026-06-12', 'BK-20260612-A1B2C', 'pending checkin', '2026-06-12 10:00:00', '2026-06-19 10:00:00', NULL, NULL, 'week', 400.00, NULL, '2026-06-11 17:42:03', '2026-06-11 17:42:03');
 
 -- --------------------------------------------------------
 
@@ -78,7 +79,11 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`customer_id`, `fullname`, `email`, `password`, `phone`, `status`, `created_at`, `updated_at`) VALUES
-(4, 'MAYI', 'mayi3@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2zp7uge3Yete', '0178492625', 'active', '2026-06-11 00:06:24', '2026-06-11 00:35:22');
+(4, 'MAYI', 'mayi3@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2zp7uge3Yete', '0178492625', 'active', '2026-06-11 00:06:24', '2026-06-11 00:35:22'),
+(5, 'Celestina', 'celestina@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', '0171112233', 'active', '2026-06-11 17:44:36', '2026-06-11 17:44:36'),
+(6, 'Hi', 'hi@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', '0172223344', 'active', '2026-06-11 17:44:36', '2026-06-11 17:44:36'),
+(7, 'Kaimi', 'kaimi@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', '0173334455', 'active', '2026-06-11 17:44:36', '2026-06-11 17:44:36'),
+(8, 'Jingen', 'jingen@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', '0174445566', 'active', '2026-06-11 17:44:36', '2026-06-11 17:44:36');
 
 -- --------------------------------------------------------
 
@@ -104,7 +109,10 @@ CREATE TABLE `staff` (
 
 INSERT INTO `staff` (`staff_id`, `fullname`, `email`, `password`, `role`, `phone`, `promoted_by`, `created_at`, `updated_at`) VALUES
 (1, 'Super Admin', 'admin@cowork.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'superadmin', '0123456789', NULL, '2026-06-10 14:35:10', '2026-06-10 14:35:10'),
-(2, 'Ma', 'mayi2@gmail.com', '$2y$10$kNQwRBcaNMEmKnDkA7hBuu9TVhwkVwCQ4MuLRVEQrENIECEB0omDa', 'staff', '0178492625', 1, '2026-06-10 14:41:08', '2026-06-10 14:41:08');
+(2, 'Ma', 'mayi2@gmail.com', '$2y$10$kNQwRBcaNMEmKnDkA7hBuu9TVhwkVwCQ4MuLRVEQrENIECEB0omDa', 'staff', '0178492625', 1, '2026-06-10 14:41:08', '2026-06-10 14:41:08'),
+(3, 'Tina', 'tina@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', 'staff', '0154321321', 1, '2026-06-11 17:48:25', '2026-06-11 17:48:25'),
+(4, 'Je', 'je@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', 'staff', '01765432189', 1, '2026-06-11 17:48:25', '2026-06-11 17:48:25'),
+(5, 'Km', 'km@gmail.com', '$2y$10$AX6R4w2V00QgkxbzyCik.eQF5LNsgd6wiA33X8WKS2z', 'staff', '0177894561', 1, '2026-06-11 17:48:25', '2026-06-11 17:48:25');
 
 -- --------------------------------------------------------
 
@@ -247,19 +255,19 @@ ALTER TABLE `zone`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `staff`
 --
 ALTER TABLE `staff`
-  MODIFY `staff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `staff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `workspace`
