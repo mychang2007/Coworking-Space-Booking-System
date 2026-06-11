@@ -22,9 +22,10 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
 .contact-item .ci { font-size: 1.3rem; color: var(--brown-light); }
 </style>
 </head>
+
 <body>
 
-<!-- ─── NAVIGATION BAR ─────────────────────────── -->
+<!-- ─── NAVBAR ─────────────────────────── -->
 <nav class="navbar">
   <div class="navbar-logo">CO<span>WORK</span></div>
   <ul class="navbar-links">
@@ -37,13 +38,20 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
     <li><a href="#features">Features</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#contact">Contact</a></li>
+
   </ul>
   <div class="navbar-actions">
+    <div class="user-dropdown"></div>
     <?php if ($loggedIn): ?>
-      <div class="user-pill">
+      <div class="user-pill" onclick="toggleDropdown(event)">
         <div class="avatar"><?= $userInitial ?></div>
-        <?= $userName ?>
+          <span><?= $userName ?></span>
+          <span class="arrow">▼</span>
       </div>
+      <div class="dropdown-menu" id="userMenu">
+        <a href="settings.php">⚙️ Account Settings</a>
+        <div class="dropdown-divider"></div>
+        <script src="dropdown.js"></script>
       <a href="logout.php" class="btn btn-outline btn-sm">Logout</a>
     <?php else: ?>
       <a href="login.php"    class="btn btn-outline btn-sm">Login</a>
@@ -53,7 +61,7 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
 </nav>
 
 <!-- ─── INTRO ──────────────────────────── -->
-<section class="intro">
+<section class="intro" id="home">
   <div class="intro-bg"></div>
   <div class="intro-overlay"></div>
   <div class="intro-content">
@@ -71,7 +79,7 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
     <div class="intro-info">
       <div class="intro-info-item">
         <span class="icon">📍</span>
-        <p><strong>JohorBahru, Malaysia</strong></p>
+        <p><strong>Johor Bahru, Malaysia</strong></p>
       </div>
       <div class="intro-info-item">
         <span class="icon">🕐</span>
@@ -122,14 +130,14 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
       <h3>Single Room</h3>
       <p>Floor 1 · 20 rooms · Perfect for focused solo work</p>
       <div style="font-size:1.5rem;font-weight:800;color:var(--brown);margin:12px 0">RM10 <small style="font-size:0.9rem;font-weight:500;color:var(--text-muted)">/slot (4 hrs)</small></div>
-      <a href="booking_form.php?type=single" class="btn btn-primary" style="width:100%">Book Now</a>
+      <br><a href="booking_form.php?type=single" class="btn btn-primary" style="width:100%">Book Now</a>
     </div>
     <div class="card" style="text-align:center;box-shadow:var(--shadow-md)">
       <div style="font-size:2.5rem;margin-bottom:12px;">👥</div>
       <h3>Discussion Room</h3>
       <p>Floor 2 · 10 rooms · Great for small team meetings</p>
       <div style="font-size:1.5rem;font-weight:800;color:var(--brown);margin:12px 0">RM30 <small style="font-size:0.9rem;font-weight:500;color:var(--text-muted)">/slot (4 hrs)</small></div>
-      <a href="booking_form.php?type=discussion" class="btn btn-primary" style="width:100%">Book Now</a>
+      <br><a href="booking_form.php?type=discussion" class="btn btn-primary" style="width:100%">Book Now</a>
     </div>
     <div class="card" style="text-align:center">
       <div style="font-size:2.5rem;margin-bottom:12px;">🏢</div>
@@ -168,10 +176,10 @@ $userInitial = $loggedIn ? strtoupper($userName[0]) : '';
   <h2>Get in Touch</h2>
   <p>Have questions? Our team is ready to help you find the perfect workspace.</p>
   <div class="contact-grid">
-    <div class="contact-item"><span class="ci">📍</span><span>Cyberjaya, Selangor, Malaysia</span></div>
-    <div class="contact-item"><span class="ci">📧</span><span>hello@coworkspace.my</span></div>
-    <div class="contact-item"><span class="ci">📞</span><span>+60 3-8888 1234</span></div>
-    <div class="contact-item"><span class="ci">🕐</span><span>Open daily except Tuesdays</span></div>
+    <div class="contact-item"><span class="ci">📍</span><span>JohorBahru, Johor, Malaysia</span></div>
+    <div class="contact-item"><span class="ci">📧</span><span>cowork@coworkspace.my</span></div>
+    <div class="contact-item"><span class="ci">📞</span><span>+60 8-8888 8888</span></div>
+    <div class="contact-item"><span class="ci">🕐</span><span>Open daily</span></div>
   </div>
 </section>
 

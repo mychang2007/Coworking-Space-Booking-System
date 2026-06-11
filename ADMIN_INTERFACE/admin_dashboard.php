@@ -1,55 +1,54 @@
 <?php
 session_start();
+require_once 'auth.php';
 require_once 'db.php';
+requireAdmin();
 
-// Admin guard
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header("Location: login.php"); exit;
-}
 $adminName = htmlspecialchars($_SESSION['user_name']);
 $adminInit = strtoupper($adminName[0]);
 
 // ── STATS ──────────────────────────────────────
 // Active bookings count
 $activeCount = mysqli_fetch_assoc(mysqli_query($conn,
-    "SELECT COUNT(*) AS n FROM bookings WHERE status='active'"))['n'];
+    "SELECT COUNT(*) AS n FROM booking WHERE status='active'"))['n'];
 
-// Total customers (users with role=user)
+// Total customers
+// FIX: query `customer` table (no role column needed — all rows are customers)
 $customerCount = mysqli_fetch_assoc(mysqli_query($conn,
-    "SELECT COUNT(*) AS n FROM users WHERE role='user'"))['n'];
+    "SELECT COUNT(*) AS n FROM customer"))['n'];
 
 // Monthly revenue (current month)
 $monthRevenue = mysqli_fetch_assoc(mysqli_query($conn,
-    "SELECT COALESCE(SUM(total_price),0) AS r FROM bookings
+    "SELECT COALESCE(SUM(total_price),0) AS r FROM booking
      WHERE status IN ('active','completed')
      AND MONTH(created_at)=MONTH(NOW()) AND YEAR(created_at)=YEAR(NOW())"))['r'];
 
 // ── ACTIVE BOOKINGS RIGHT NOW ──────────────────
+// FIX: JOIN customer (customer_id), workspace (workspace_id), zone (zone_id)
 $liveRes = mysqli_query($conn,
-    "SELECT b.*, u.fullname, u.email, u.phone,
-            w.room_number, wt.type_name AS room_type, wt.floor
-     FROM bookings b
-     JOIN users u ON b.user_id = u.id
-     JOIN workspaces w ON b.workspace_id = w.id
-     JOIN workspace_types wt ON w.type_id = wt.id
+    "SELECT b.*, c.fullname, c.email, c.phone,
+            w.workspace_name, z.zone_name, z.floor
+     FROM booking b
+     JOIN customer  c ON b.customer_id  = c.customer_id
+     JOIN workspace w ON b.workspace_id = w.workspace_id
+     JOIN zone      z ON w.zone_id      = z.zone_id
      WHERE b.status='active'
-       AND NOW() BETWEEN b.start_datetime AND b.end_datetime
-     ORDER BY b.start_datetime DESC
+       AND NOW() BETWEEN b.start_time AND b.end_time
+     ORDER BY b.start_time DESC
      LIMIT 20");
 $liveBookings = mysqli_fetch_all($liveRes, MYSQLI_ASSOC);
 
 // ── RECENT BOOKINGS ────────────────────────────
 $recentRes = mysqli_query($conn,
-    "SELECT b.*, u.fullname, w.room_number, wt.type_name AS room_type
-     FROM bookings b
-     JOIN users u ON b.user_id = u.id
-     JOIN workspaces w ON b.workspace_id = w.id
-     JOIN workspace_types wt ON w.type_id = wt.id
+    "SELECT b.*, c.fullname, w.workspace_name, z.zone_name
+     FROM booking b
+     JOIN customer  c ON b.customer_id  = c.customer_id
+     JOIN workspace w ON b.workspace_id = w.workspace_id
+     JOIN zone      z ON w.zone_id      = z.zone_id
      ORDER BY b.created_at DESC LIMIT 10");
 $recentBookings = mysqli_fetch_all($recentRes, MYSQLI_ASSOC);
 
-$typeLabel = ['single'=>'Single','discussion'=>'Discussion','office'=>'Office'];
-$durLabel  = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly'];
+$durLabel = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,26 +60,9 @@ $durLabel  = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly
 </head>
 <body>
 <div class="admin-wrapper">
+  <?php include 'admin_sidebar.php'; ?>
 
-  <!-- SIDEBAR -->
-  <aside class="admin-sidebar">
-    <div class="admin-sidebar-logo">CO<span>WORK</span></div>
-    <ul class="admin-nav">
-      <li class="active"><a href="admin_dashboard.php"><span class="nav-icon">📊</span> Dashboard</a></li>
-      <li><a href="manage_workspace.php"><span class="nav-icon">🏢</span> Manage Workspace</a></li>
-      <li><a href="manage_zone.php"><span class="nav-icon">👥</span> Manage Zone</a></li>
-      <li><a href="manage_booking.php"><span class="nav-icon">📋</span> Manage Booking</a></li>
-    </ul>
-    <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,0.08)">
-      <a href="logout.php" class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,0.3);width:100%">
-        Logout
-      </a>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
   <div class="admin-main">
-    <!-- Topbar -->
     <div class="admin-topbar">
       <h4>Dashboard</h4>
       <div class="user-chip">
@@ -130,20 +112,18 @@ $durLabel  = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly
           <p style="font-size:0.88rem;color:var(--text-muted);padding:20px 0;text-align:center">No active check-ins right now.</p>
         <?php else: ?>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
-          <?php foreach ($liveBookings as $lb):
-            $rtl = $typeLabel[$lb['room_type']] ?? $lb['room_type'];
-          ?>
+          <?php foreach ($liveBookings as $lb): ?>
           <div style="border:1px solid var(--border);border-left:4px solid #28a745;border-radius:var(--radius-sm);padding:16px;background:var(--white)">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
               <div>
-                <div style="font-size:0.78rem;color:var(--text-muted)"><?= htmlspecialchars($lb['booking_code']) ?></div>
+                <div style="font-size:0.78rem;color:var(--text-muted)"><?= htmlspecialchars($lb['booking_token']) ?></div>
                 <div style="font-weight:700;font-size:0.95rem;margin-top:2px"><?= htmlspecialchars($lb['fullname']) ?></div>
               </div>
               <span class="badge badge-active">ACTIVE</span>
             </div>
             <div style="font-size:0.82rem;color:var(--text-muted)">
-              <div>🏢 Room <?= htmlspecialchars($lb['room_number']) ?> · <?= $rtl ?> · Floor <?= $lb['floor'] ?></div>
-              <div>📅 <?= date('d M, h:iA', strtotime($lb['start_datetime'])) ?> → <?= date('h:iA', strtotime($lb['end_datetime'])) ?></div>
+              <div>🏢 Room <?= htmlspecialchars($lb['workspace_name']) ?> · <?= htmlspecialchars($lb['zone_name']) ?> · Floor <?= $lb['floor'] ?></div>
+              <div>📅 <?= date('d M, h:iA', strtotime($lb['start_time'])) ?> → <?= date('h:iA', strtotime($lb['end_time'])) ?></div>
               <div>📧 <?= htmlspecialchars($lb['email']) ?></div>
             </div>
           </div>
@@ -158,7 +138,7 @@ $durLabel  = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly
         <table>
           <thead>
             <tr>
-              <th>Booking ID</th>
+              <th>Booking Token</th>
               <th>Customer</th>
               <th>Room</th>
               <th>Type</th>
@@ -170,11 +150,11 @@ $durLabel  = ['slot'=>'Slot','week'=>'Weekly','month'=>'Monthly','year'=>'Yearly
           <tbody>
             <?php foreach ($recentBookings as $rb): ?>
             <tr>
-              <td><span style="font-family:monospace;font-size:0.8rem"><?= htmlspecialchars($rb['booking_code']) ?></span></td>
+              <td><span style="font-family:monospace;font-size:0.8rem"><?= htmlspecialchars($rb['booking_token']) ?></span></td>
               <td><?= htmlspecialchars($rb['fullname']) ?></td>
-              <td><?= htmlspecialchars($rb['room_number']) ?> (<?= $typeLabel[$rb['room_type']] ?>)</td>
+              <td><?= htmlspecialchars($rb['workspace_name']) ?> (<?= htmlspecialchars($rb['zone_name']) ?>)</td>
               <td><?= $durLabel[$rb['booking_type']] ?? $rb['booking_type'] ?></td>
-              <td><?= date('d M Y', strtotime($rb['start_datetime'])) ?></td>
+              <td><?= date('d M Y', strtotime($rb['start_time'])) ?></td>
               <td style="font-weight:700;color:var(--brown)">RM <?= number_format($rb['total_price'],2) ?></td>
               <td><span class="badge badge-<?= $rb['status'] ?>"><?= ucfirst($rb['status']) ?></span></td>
             </tr>

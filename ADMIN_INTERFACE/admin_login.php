@@ -20,20 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($pass)) {
         $error = 'Please enter your admin email and password.';
     } else {
+        // FIX: query `staff` table with correct PK `staff_id`
         $st = mysqli_prepare($conn,
-            "SELECT id, fullname, email, password, role
-             FROM admins WHERE email = ?");
+            "SELECT staff_id, fullname, email, password, role
+             FROM staff WHERE email = ?");
         mysqli_stmt_bind_param($st, 's', $email);
         mysqli_stmt_execute($st);
         $admin = mysqli_fetch_assoc(mysqli_stmt_get_result($st));
 
         if ($admin && password_verify($pass, $admin['password'])) {
             session_regenerate_id(true);
-            $_SESSION['user_id']         = $admin['id'];
-            $_SESSION['user_name']       = $admin['fullname'];
-            $_SESSION['user_email']      = $admin['email'];
-            $_SESSION['user_role']       = 'admin';
-            $_SESSION['admin_subrole']   = $admin['role']; // 'superadmin' or 'staff'
+            $_SESSION['user_id']        = $admin['staff_id'];   // FIX: staff_id not id
+            $_SESSION['user_name']      = $admin['fullname'];
+            $_SESSION['user_email']     = $admin['email'];
+            $_SESSION['user_role']      = 'admin';
+            $_SESSION['admin_subrole']  = $admin['role'];       // 'superadmin' or 'staff'
 
             header("Location: admin_dashboard.php");
             exit;
