@@ -39,7 +39,7 @@ if (isset($_GET['scan_token'])) {
 
         if ($currentStatus === 'pending checkin') {
             // Step 1: Handle Check-in
-            $up = mysqli_prepare($conn, "UPDATE booking SET status='active' WHERE booking_id=?");
+            $up = mysqli_prepare($conn, "UPDATE booking SET status='active', checkin_time=NOW() WHERE booking_id=?");
             mysqli_stmt_bind_param($up, 'i', $bid);
             if (mysqli_stmt_execute($up)) {
                 $_SESSION['msg'] = "✅ Check-in successful for Token: " . htmlspecialchars($token);
@@ -50,7 +50,7 @@ if (isset($_GET['scan_token'])) {
             // Step 2: Handle Check-out
             if ($currentTime <= $endTime) {
                 // On-Time Check-out
-                $up = mysqli_prepare($conn, "UPDATE booking SET status='completed' WHERE booking_id=?");
+               $up = mysqli_prepare($conn, "UPDATE booking SET status='completed', checkout_time=NOW() WHERE booking_id=?");
                 mysqli_stmt_bind_param($up, 'i', $bid);
                 if (mysqli_stmt_execute($up)) {
                     $_SESSION['msg'] = "✅ On-time check-out processed successfully for Token: " . htmlspecialchars($token);
@@ -68,7 +68,7 @@ if (isset($_GET['scan_token'])) {
                 $systemNote = "[System: Late check-out by " . $diffMinutes . " mins. Charged extra RM " . number_format($lateCharge, 2) . "]";
                 $newNotes = trim($bData['notes'] . "\n" . $systemNote);
                 
-                $up = mysqli_prepare($conn, "UPDATE booking SET status='checkout late', total_price=?, notes=? WHERE booking_id=?");
+                $up = mysqli_prepare($conn, "UPDATE booking SET status='checkout late', total_price=?, notes=?, checkout_time=NOW() WHERE booking_id=?");
                 mysqli_stmt_bind_param($up, 'dsi', $newPrice, $newNotes, $bid);
                 if (mysqli_stmt_execute($up)) {
                     $_SESSION['msg'] = "⚠️ CheckOut Late processed! Overdue by " . $diffMinutes . " mins. Extra fee of RM " . number_format($lateCharge, 2) . " added.";
