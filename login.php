@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Your account has been suspended. Please contact support.';
             } else {
                 session_regenerate_id(true);
-                $_SESSION['user_id']    = $user['customer_id'];  // FIX: customer_id not id
+                $_SESSION['user_id']    = $user['customer_id'];
                 $_SESSION['user_name']  = $user['fullname'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role']  = 'user';
